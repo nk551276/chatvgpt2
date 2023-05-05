@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Python Weather API Project</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="A Python weather API project that retrieves the current temperature of a city using the Weather API.">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		body {
+			background-color: #f2f2f2;
+			font-family: Arial, sans-serif;
+			color: #333;
+		}
+		h1 {
+			font-size: 30px;
+			text-align: center;
+			margin-top: 50px;
+		}
+		p {
+			font-size: 20px;
+			margin: 20px;
+			line-height: 1.5;
+		}
+		form {
+			margin: 20px;
+			padding: 20px;
+			background-color: #fff;
+			border-radius: 10px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+		}
+		label {
+			font-size: 18px;
+			display: block;
+			margin-bottom: 10px;
+		}
+		input[type="text"] {
+			font-size: 16px;
+			padding: 10px;
+			border: none;
+			border-radius: 5px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			width: 100%;
+			margin-bottom: 20px;
+		}
+		input[type="submit"] {
+			font-size: 18px;
+			padding: 10px 20px;
+			background-color: #4CAF50;
+			color: #fff;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+		input[type="submit"]:hover {
+			background-color: #3e8e41;
+		}
+		#error {
+			color: red;
+			font-weight: bold;
+			margin-top: 10px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Python Weather API Project</h1>
+	<form method="post" action="">
+		<label for="city">Enter the name of the city:</label>
+		<input type="text" id="city" name="city" placeholder="e.g. London" required>
+		<input type="submit" value="Get Weather">
+	</form>
+
+	<?php
+		if ($_SERVER["REQUEST_METHOD"] == "POST") {
+			$city = $_POST["city"];
+			$url = "https://api.weatherapi.com/v1/current.json?key=93df1ae005264056906102402230105&q=$city";
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			$response = curl_exec($ch);
+			curl_close($ch);
+
+			$data = json_decode($response, true);
+			if (isset($data["error"])) {
+				echo "<p id='error'>" . $data["error"]["message"] . "</p>";
+			} else {
+				$temperature = $data["current"]["temp_c"];
+				echo "<p>The current weather in $city is $temperature&deg;C.</p>";
+			}
+		}
+	?>
+</body>
+</html>
